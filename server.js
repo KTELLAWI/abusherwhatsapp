@@ -129,7 +129,7 @@ app.get('/events', (req, res) => {
   });
 });
 
-app.get('/qr', (req, res) => {
+app.get('/whatsapp/qr', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'qr.html'));
 });
 // // API: Send WhatsApp OTP
@@ -152,7 +152,7 @@ app.post('/send-otp', async (req, res) => {
   }
 });
 
-app.get('/', (req, res) => {
+app.get('/whatsapp', (req, res) => {
   res.send('✅ WhatsApp SSE server running!');
 });
 
