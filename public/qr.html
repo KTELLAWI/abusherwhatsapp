@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <title>ابوشاهر للذبائح</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway|Cairo">
+    <style>
+        body,
+        h1 {
+            font-family: "Raleway", sans-serif
+        }
+
+        body,
+        html {
+            height: 100%;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .bgimg {
+            background: url('');
+            min-height: 100%;
+            background-color: black;
+            background-repeat: repeat;
+            object-fit: contain;
+        }
+
+        .lbl {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 500;
+            font-size: 2.0em;
+            color: white;
+            background: linear-gradient(to right, rgba(0, 4, 40, 1), rgba(0, 78, 146, 1));
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .lbl1 {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 400;
+            font-size: 1.5em;
+            color: white;
+            background: linear-gradient(to right, rgba(0, 4, 40, 1), rgba(0, 78, 146, 1));
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .qr-img {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+        <div class="w3-display-topleft w3-padding-large w3-xlarge">
+            ابوشاهر للذبائح
+        </div>
+
+        <div id='content' class="w3-display-middle">
+            <center>
+                <h2 id="title" class="lbl w3-jumbo w3-animate-top">انتظر توليد رمز QR...</h2>
+                <hr class="w3-border-grey" style="margin:auto;width:40%">
+                <div id="qr-container" class="qr-img"></div>
+                <p id="status-text" class="w3-center"></p>
+            </center>
+        </div>
+
+
+    </div>
+
+    <script>
+        const evtSource = new EventSource('/events');
+
+        evtSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.qr) {
+                document.getElementById('title').innerText = "تم توليد رمز QR";
+                document.getElementById('qr-container').innerHTML = `
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data.qr)}" />
+                `;
+                document.getElementById('status-text').innerHTML = "<p>يرجى المسح باستخدام واتساب</p>";
+            }
+
+            if (data.status === 'ready') {
+                const bb = document.getElementById('content');
+                bb.innerHTML = '<h2 class="lbl">✅ تم ربط الهاتف بنجاح، يمكنك إغلاق الصفحة</h2>';
+                evtSource.close();
+            }
+
+            if (data.status === 'disconnected') {
+                const bb = document.getElementById('content');
+                bb.innerHTML = '<h2 class="lbl">🔌 تم قطع الاتصال! انتظر توليد رمز جديد لإعادة المسح</h2>';
+                // Keep SSE open — new QR will appear automatically
+            }
+        };
+    </script>
+</body>
+
+</html>
