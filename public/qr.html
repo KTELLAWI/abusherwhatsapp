@@ -76,7 +76,7 @@
     </div>
 
     <script>
-        const evtSource = new EventSource('/events');
+        const evtSource = new EventSource('/whatsapp/events');
 
         evtSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
